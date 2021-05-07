@@ -22,7 +22,7 @@ This is short and compact yet suffers from a complete misunderstanding of what a
 
 When the program hits an `await` statement it stops what it is doing, and __waits__.
 
-This method does not take advantage of the compiler optimizations for leveraging background threads to do work.
+This method does not allow for synchronous and unrelated operations to continue while waiting for the asynchronous work to complete in the background.
 
 You can see this by looking at the output this produces.
 
@@ -62,7 +62,7 @@ public static async Task CookBreakfastFast() {
 
 I know what you are thinking, at first glance this is a full on 28.5% explosion in code.  We've been told for years that fewer lines is better performing code.  But in the `async` and `await` world, these two extra lines of code are going to cut our total execution time by 50%.
 
-Our tasks are now going to get put on background threads.  They each start doing their work, and __then__ we wait for them.
+Our tasks are now going to get executed in the background.  They each start doing their work, and __then__ we wait for them.
 
 If we look at the console output we see a massive difference.
 
@@ -86,8 +86,7 @@ Breakfast is ready
 
 ## Conclusion
 
-The first method while compact, and in all fairness compiles and works, is basically wrong.  You might as well not be using the overhead of tasks because you aren't going to get any the benefits, especially if the tasks you are calling are they themselves calling additional tasks.  You are basically living synchronously in an asynchronous world.
+The first method, while compact, and in all fairness compiles and works, is lazy. It doesn't allow for squeezing all the performance out of the method that you could possibly get. This may or may not matter--after all, async isn't about raw performance, it's about throughput.
 
 Allowing your brain to step away from a minimalist view of lines of codes will actually allow the compiler to do it's job, and help your program find the quickest path to completion.
 
-If you'll excuse me, I now have a lot of code to refactor.
